@@ -11,6 +11,23 @@ cd second-brain/mcp
 npm install
 ```
 
+### Configuration
+
+Create a `.env` file (copy from `.env.example`):
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and set your values:
+
+```env
+PORT=3000
+API_KEY=your-secure-api-key-here
+```
+
+**⚠️ Never commit `.env` to version control** — it contains secrets.
+
 ### Development
 
 Run the server directly with tsx (no build needed):
@@ -19,7 +36,13 @@ Run the server directly with tsx (no build needed):
 npm run dev
 ```
 
-The server will start and wait for MCP client connections on stdio.
+Or with HTTP server:
+
+```bash
+npm run dev:http
+```
+
+The server will start and wait for connections (MCP stdio or HTTP).
 
 ### Building
 
