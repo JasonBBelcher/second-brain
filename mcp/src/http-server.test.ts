@@ -7,14 +7,14 @@ import { buildSearchIndex } from './search.js';
 // We'll test by making actual HTTP requests
 let server: http.Server;
 const API_KEY = 'test-api-key-12345';
-const BASE_URL = 'http://localhost:3001';
+let BASE_URL = 'http://localhost:3001';
 
 beforeAll(async () => {
   // Load knowledge base for the server
   await loadKnowledgeBase();
   buildSearchIndex(getAllDocuments());
 
-  // Start a test server with authentication
+  // Start a test server with authentication (port 0 = let OS assign available port)
   server = http.createServer(async (req, res) => {
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -83,7 +83,13 @@ beforeAll(async () => {
   });
 
   await new Promise<void>((resolve) => {
-    server.listen(3001, () => resolve());
+    server.listen(0, () => {
+      const address = server.address();
+      if (address && typeof address !== 'string') {
+        BASE_URL = `http://localhost:${address.port}`;
+      }
+      resolve();
+    });
   });
 });
 
@@ -92,7 +98,10 @@ afterAll(
     new Promise<void>((resolve, reject) => {
       server.close((err) => {
         if (err) reject(err);
-        else resolve();
+        else {
+          // Wait for port to be fully released
+          setTimeout(resolve, 100);
+        }
       });
     })
 );
@@ -114,7 +123,7 @@ async function request(
   }
 
   const response = await fetch(url.toString(), { method, headers });
-  const data = await response.json();
+  const data = (await response.json()) as Record<string, unknown>;
   return { status: response.status, data };
 }
 
