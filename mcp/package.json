@@ -6,8 +6,10 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx src/index.ts",
+    "dev:http": "tsx src/http-server.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "start:http": "node dist/http-server.js",
     "test": "vitest",
     "test:ui": "vitest --ui"
   },
