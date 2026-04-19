@@ -1,5 +1,6 @@
 import Fuse from 'fuse.js';
 import type { KBDocument } from './knowledge-base.js';
+import { setSearchIndex } from './knowledge-base.js';
 
 export interface SearchResult {
   slug: string;
@@ -23,6 +24,8 @@ export function buildSearchIndex(docs: KBDocument[]): void {
     ignoreLocation: true,
     minMatchCharLength: 3,
   });
+  // Keep reference in knowledge-base.ts for rebuilding when docs change
+  setSearchIndex(_fuse);
 }
 
 /** Extract a short excerpt around the first match */
